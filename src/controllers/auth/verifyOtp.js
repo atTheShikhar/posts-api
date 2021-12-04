@@ -1,6 +1,6 @@
 import User from '../../models/user.js';
 import Otp from '../../models/otp.js';
-import jwt from 'jsonwebtoken';
+import createToken from '../../utils/createToken.js';
 
 // Verify OTP controller 
 const verifyOtp = async (req,res) => {
@@ -33,6 +33,17 @@ const verifyOtp = async (req,res) => {
           });
         }
 
+        // generate JSON Web Token
+        const { token, maxAge } = createToken({
+          _id: userData._id,
+          email
+        });
+
+        // Set the token as a cookie is everything passes
+        res.cookie('jwt', token, { 
+          maxAge: maxAge * 1000,
+        });
+
         // User is not verified
         if (!userData.isVerified) {
           await User.findOneAndUpdate(
@@ -48,20 +59,11 @@ const verifyOtp = async (req,res) => {
           );
 
           return res.status(201).json({
-            message: "Registration successful! Please complete your profile using /api/complete-profile route."
+            message: "Registration successful!"
           })
         }
 
         // User is verified;        
-        const maxAge = 24 * 60 * 60; // Token expires after 1 day;
-        const token = jwt.sign({ _id: userData?._id }, process.env.JWT_KEY, { expiresIn: maxAge });
-
-        // Set the token as a cookie
-        res.cookie('jwt', token, { 
-            maxAge: maxAge * 1000,
-        });
-
-        // Also return user data
         return res.status(200).json({
           message: "Login successful!", 
           user: {
@@ -80,7 +82,7 @@ const verifyOtp = async (req,res) => {
     }
     // If user not found
     return res.status(404).json({
-      error: "User not found! Try registering via /api/signup route first."
+      error: "User not found!"
     });
   } catch(err) {
     console.log(err);

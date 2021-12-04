@@ -1,27 +1,7 @@
 import User from '../../models/user.js';
 import Otp from '../../models/otp.js';
-import nodemailer from 'nodemailer';
-import { google } from 'googleapis';
+import createGmailTransport from '../../utils/createGmailTransport.js';
 import generateOtp from '../../utils/generateOtp.js';
-
-const OAuth2 = google.auth.OAuth2;
-
-//OAuth2 configuration
-const oauth2Client = new OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"   
-);
-oauth2Client.setCredentials({
-    refresh_token: process.env.REFRESH_TOKEN
-});
-const accessToken = oauth2Client.getAccessToken((err,acctoken) => {
-    if(err) {
-       return 
-    } else {
-       return acctoken;
-    }
-});
 
 // Sign Up Controller
 const signup = async (req,res) => {
@@ -33,28 +13,13 @@ const signup = async (req,res) => {
     if (userData) {
       // Return with error
       return res.status(403).json({
-        error: "User already exits! Please login via /api/login route"
+        error: "User already registered!"
       })
     }
 
     // If User does not exists
     const otp = generateOtp();
-
-    //Nodemailer configuration to send mails using gmail
-    const smtpTransport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.GMAIL_ID,
-        clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        refreshToken: process.env.REFRESH_TOKEN,
-        accessToken: accessToken
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
+    const gmailTransport = createGmailTransport();
 
     const mailOptions = {
         from: process.env.GMAIL_ID,
@@ -73,7 +38,7 @@ const signup = async (req,res) => {
         `
     };
 
-    const mailSentResponse = await smtpTransport.sendMail(mailOptions);
+    const mailSentResponse = await gmailTransport.sendMail(mailOptions);
     
     if(mailSentResponse) {
       const newUser = await User.findOneAndUpdate(
@@ -112,7 +77,7 @@ const signup = async (req,res) => {
     } 
 
     return res.status(500).json({
-      error: "Something went wrong, Please try again later!"
+      error: "Error sending OTP, Please try again later!"
     });
   } catch(err) {
     console.log(err);
