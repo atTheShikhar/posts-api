@@ -2,8 +2,10 @@
   "name": "posts-api",
   "version": "1.0.0",
   "description": "api for creating posts with proper user authentication",
-  "main": "index.js",
+  "main": "src/server.js",
+  "type": "module",
   "scripts": {
+    "start": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +23,17 @@
   "bugs": {
     "url": "https://github.com/atTheShikhar/posts-api/issues"
   },
-  "homepage": "https://github.com/atTheShikhar/posts-api#readme"
+  "homepage": "https://github.com/atTheShikhar/posts-api#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "googleapis": "^92.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.14",
+    "nodemailer": "^6.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 }
