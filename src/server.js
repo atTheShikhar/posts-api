@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import authRouter from './routes/auth.js';
+import postsRouter from './routes/posts.js';
 import cookieParser from 'cookie-parser';
 
 // Initialize config file
@@ -35,7 +36,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 // Routes
-app.use("/api",authRouter);
+app.use("/api", authRouter, postsRouter);
 
 const PORT = process.env.PORT || 5000;
 
