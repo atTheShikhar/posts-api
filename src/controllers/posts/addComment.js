@@ -5,7 +5,10 @@ const addComment = async (req, res) => {
   const { content, postId, decoded } = req.body;
 
   try {
-    const postData = await Post.findById(postId);
+    const postData = await Post.findOne({
+      _id: postId,
+      isDeleted: false,
+    });
 
     if (postData) {
       const commentData = new Comment({
