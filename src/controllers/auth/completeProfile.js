@@ -1,17 +1,12 @@
 import User from "../../models/user.js";
 
 const completeProfile = async (req,res) => {
-  const { firstName, lastName, email, decoded } = req.body;
-
-  if (decoded?.email !== email) {
-    return res.status(401).json({
-      error: "User not authorized!"
-    });
-  }
+  const { firstName, lastName, decoded } = req.body;
 
   try {
     const updatedUser = await User.findOneAndUpdate({
-      email,
+      _id: decoded._id,
+      email: decoded.email,
     },{
       firstName,
       lastName,
