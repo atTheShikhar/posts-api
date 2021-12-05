@@ -10,7 +10,6 @@ const router = Router();
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/verify-otp', verifyOtp);
-
 router.post('/complete-profile', authenticate, completeProfile);
 
 export default router;
