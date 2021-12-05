@@ -21,7 +21,7 @@ cd posts-api
 	```bash
 	npm install
 	```
-	3. Goto `/src/configs` folder and create a file `config.env` and set the following with your own values:
+	2. Goto `/src/configs` folder and create a file `config.env` and set the following with your own values:
 	```
 	PORT= <port on which you want to run the server>
 	MONGO_CONNECTION_URI= <your mongodb connection url>
